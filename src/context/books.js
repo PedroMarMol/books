@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import axios from "axios";
+import { create } from "json-server";
 
 const BooksContext = createContext();
 
@@ -21,13 +22,13 @@ function Provider({ children }) {
             if (book.id === id) {
                 return { ...book, ...response.data }
             }
-            return book
+            return book;
         })
-        setBooks(updatedBooks)
+        setBooks(updatedBooks);
     }
 
     const deleteBookById = async(id) => {
-        await axios.delete(`http://localhost:3001/books/${id}`)
+        await axios.delete(`http://localhost:3001/books/${id}`);
         
         const updatedBooks = books.filter((book) => {
             return book.id !== id;
@@ -38,14 +39,22 @@ function Provider({ children }) {
     const createBook = async (title) => {
         const response = await axios.post('http://localhost:3001/books', {
             title,
-        })
+        });
 
-        const updatedBooks = [...books, response.data]
-        setBooks(updatedBooks)
-    }
+        const updatedBooks = [...books, response.data];
+        setBooks(updatedBooks);
+    };
+
+    const valueToShare = {
+        books,
+        fetchBooks,
+        editBookById,
+        deleteBookById,
+        createBook
+    };
 
     return (
-        <BooksContext.Provider value={{}}>
+        <BooksContext.Provider value={valueToShare}>
             {children }
         </BooksContext.Provider>
     )
